@@ -387,7 +387,8 @@
         memberLast = last;
         memberVerified = true;
         const firstName = data.memberResult && data.memberResult.first ? data.memberResult.first : '';
-        const lastName  = data.memberResult && data.memberResult.last  ? data.memberResult.last  : '';
+        const rawLast   = data.memberResult && data.memberResult.last  ? data.memberResult.last  : '';
+        const lastName  = rawLast.replace(/\b\w/g, c => c.toUpperCase());
         const fullName  = (firstName + ' ' + lastName).trim();
         bar.className = 'rr-member-bar verified';
         lbl.textContent = '✓ Member verified — welcome, ' + fullName + '!';
@@ -396,7 +397,7 @@
         document.getElementById('rr-mbr-zip').style.display = 'none';
         btn.style.display = 'none';
         // Add a welcome message to chat
-        addMsg("bot-raw", "Bully! I have confirmed your membership. Welcome, " + firstName + "! Ask me anything — I can now share member-specific information with you.");
+        addMsg("bot-raw", "Bully! Welcome, " + firstName + "! I have confirmed your membership. Ask me anything — I can now share member-specific information with you.");
       } else {
         bar.className = 'rr-member-bar failed';
         lbl.textContent = "✗ Not matched — check your number, last name and zip, or continue as a visitor.";
