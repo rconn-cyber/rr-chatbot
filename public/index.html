@@ -219,6 +219,7 @@
   let busy    = false;
   let memberNum  = null;
   let memberLast = null;
+  let memberZip  = null;
   let memberVerified = false;
   let contactOpen = false;
 
@@ -313,7 +314,7 @@
       const res = await fetch(PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, memberNum, memberLast }),
+        body: JSON.stringify({ messages: history, memberNum, memberLast, memberZip }),
       });
       const data = await res.json();
       const reply = data?.content?.[0]?.text || 'My apologies — the telegraph line seems to be down. Please try again!';
@@ -385,6 +386,7 @@
       if (data.memberStatus && data.memberStatus.includes('MEMBER VERIFIED')) {
         memberNum = num;
         memberLast = last;
+        memberZip = zip;
         memberVerified = true;
         const firstName = data.memberResult && data.memberResult.first ? data.memberResult.first : '';
         const rawLast   = data.memberResult && data.memberResult.last  ? data.memberResult.last  : '';
