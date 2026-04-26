@@ -379,7 +379,7 @@
       const res = await fetch(PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: 'hello' }], memberNum: num, memberLast: last, memberZip: zip }),
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'hello' }], memberNum: num, memberLast: last, memberZip: zip, verifyOnly: true }),
       });
       const data = await res.json();
       if (data.memberStatus && data.memberStatus.includes('MEMBER VERIFIED')) {
