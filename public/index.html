@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rough Rider Dispatch — Ask Trooper</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: transparent; display: flex; justify-content: center; align-items: flex-start; padding: 0; font-family: 'Crimson Text', Georgia, serif; }
+  .rr-chat-wrap { width: 100%; max-width: 680px; background: #0d1f3c; border-radius: 10px; border: 2px solid #C9A84C; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.30); }
+  .rr-header { background: #0d1f3c; border-bottom: 2px solid #C9A84C; padding: 14px 18px; display: flex; align-items: center; gap: 14px; }
+  .rr-badge { width: 54px; height: 54px; border-radius: 50%; background: #0d1f3c; border: 2px solid #C9A84C; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; padding: 4px; }
+  .rr-header-text { flex: 1; min-width: 0; }
+  .rr-title { font-family: 'Playfair Display', Georgia, serif; color: #C9A84C; font-size: 18px; font-weight: 700; letter-spacing: 0.04em; }
+  .rr-subtitle { color: #8fa8cc; font-size: 13px; font-style: italic; margin-top: 2px; }
+  .rr-online { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #4caf6e; letter-spacing: 0.05em; text-transform: uppercase; flex-shrink: 0; }
+  .rr-dot { width: 8px; height: 8px; background: #4caf6e; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .rr-messages { background: #f5efe3; min-height: 300px; max-height: 440px; overflow-y: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
+  .rr-messages::-webkit-scrollbar { width: 5px; }
+  .rr-messages::-webkit-scrollbar-track { background: #e8dfc8; }
+  .rr-messages::-webkit-scrollbar-thumb { background: #C9A84C88; border-radius: 3px; }
+  .msg { max-width: 85%; font-size: 15.5px; line-height: 1.55; animation: fadeUp 0.25s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .msg-bot { align-self: flex-start; background: #fff; border: 1px solid #d4c49a; border-radius: 3px 14px 14px 14px; padding: 10px 14px 10px 16px; color: #1a1209; position: relative; }
+  .msg-bot::before { content: '⚔'; position: absolute; top: -9px; left: 8px; font-size: 10px; background: #6B1A1A; color: #f5ead6; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 18px; text-align: center; }
+  .msg-user { align-self: flex-end; background: #6B1A1A; border-radius: 14px 3px 14px 14px; padding: 10px 14px; color: #f5ead6; }
+  .msg-name { font-size: 11px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 5px; opacity: 0.6; }
+  .msg-bot .msg-name { color: #6B1A1A; }
+  .msg-user .msg-name { color: #f5c87a; }
+  .typing-dots { display: inline-flex; gap: 5px; align-items: center; padding: 2px 0; }
+  .typing-dots span { width: 7px; height: 7px; background: #C9A84C; border-radius: 50%; animation: bounce 1.2s infinite; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-7px); } }
+  .rr-suggestions { background: #e8dfc8; border-top: 1px solid #d4c49a; padding: 9px 12px; display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+  .sug-label { font-size: 11px; color: #8a7a5a; letter-spacing: 0.07em; text-transform: uppercase; margin-right: 2px; }
+  .sug-btn { background: #fff; border: 1px solid #C9A84C; border-radius: 20px; padding: 5px 13px; font-family: 'Crimson Text', Georgia, serif; font-size: 13.5px; color: #6B1A1A; cursor: pointer; font-style: italic; transition: background 0.15s, color 0.15s; }
+  .sug-btn:hover { background: #C9A84C; color: #0d1f3c; }
+  .rr-input-row { background: #0d1f3c; padding: 12px 14px; display: flex; gap: 10px; align-items: center; border-top: 1px solid #1e3660; }
+  #rr-input { flex: 1; background: #f5ead6; border: 2px solid #C9A84C; border-radius: 6px; padding: 10px 14px; font-family: 'Crimson Text', Georgia, serif; font-size: 16px; color: #1a0f00; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  #rr-input::placeholder { color: #8a6a3a; font-style: italic; }
+  #rr-input:focus { border-color: #e0bc65; box-shadow: 0 0 0 3px #C9A84C44; }
+  #rr-send { background: #C9A84C; border: none; border-radius: 6px; padding: 10px 20px; font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 700; color: #0d1f3c; cursor: pointer; letter-spacing: 0.05em; transition: background 0.15s, transform 0.1s; white-space: nowrap; }
+  #rr-send:hover { background: #e0bc65; }
+  #rr-send:active { transform: scale(0.97); }
+  #rr-send:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+  /* ACTION BUTTONS ROW */
+  .rr-action-row { background: #0d1f3c; padding: 0 14px 10px; display: flex; gap: 8px; }
+  .rr-action-row button { flex: 1; background: #1e3660; border: 1.5px solid #C9A84C; border-radius: 6px; padding: 9px 10px; font-family: 'Crimson Text', Georgia, serif; font-size: 14px; color: #C9A84C; cursor: pointer; font-style: italic; transition: background 0.15s, color 0.15s; }
+  .rr-action-row button:hover { background: #C9A84C; color: #0d1f3c; }
+  #rr-contact-btn { display: block; }
+
+  /* TOAST */
+  .rr-toast-row { background: #0d1f3c; padding: 0 14px 10px; display: none; }
+  .rr-toast { background: #0d2b0d; border: 1px solid #4caf6e66; border-radius: 6px; padding: 8px 14px; font-family: 'Crimson Text', Georgia, serif; font-size: 13px; color: #4caf6e; font-style: italic; text-align: center; }
+
+  /* CONTACT FORM PANEL */
+  .rr-contact-panel { display: none; background: #f5efe3; border-top: 2px solid #C9A84C; padding: 18px 16px; }
+  .rr-contact-panel h3 { font-family: 'Playfair Display', Georgia, serif; color: #0d1f3c; font-size: 16px; margin-bottom: 4px; }
+  .rr-contact-panel p { font-size: 13px; color: #6b5a3a; font-style: italic; margin-bottom: 14px; }
+  .rr-field { margin-bottom: 12px; }
+  .rr-field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6B1A1A; margin-bottom: 4px; }
+  .rr-field input, .rr-field textarea { width: 100%; background: #fff; border: 1.5px solid #d4c49a; border-radius: 6px; padding: 9px 12px; font-family: 'Crimson Text', Georgia, serif; font-size: 15px; color: #1a0f00; outline: none; transition: border-color 0.2s; }
+  .rr-field input:focus, .rr-field textarea:focus { border-color: #C9A84C; box-shadow: 0 0 0 2px #C9A84C33; }
+  .rr-field textarea { resize: vertical; min-height: 90px; }
+  .rr-contact-btns { display: flex; gap: 10px; margin-top: 14px; }
+  #rr-contact-send { flex: 1; background: #C9A84C; border: none; border-radius: 6px; padding: 10px; font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 700; color: #0d1f3c; cursor: pointer; letter-spacing: 0.05em; transition: background 0.15s; }
+  #rr-contact-send:hover { background: #e0bc65; }
+  #rr-contact-send:disabled { opacity: 0.45; cursor: default; }
+  #rr-contact-cancel { background: transparent; border: 1px solid #d4c49a; border-radius: 6px; padding: 10px 18px; font-family: 'Crimson Text', Georgia, serif; font-size: 14px; color: #8a7a5a; cursor: pointer; font-style: italic; transition: background 0.15s; }
+  #rr-contact-cancel:hover { background: #e8dfc8; }
+
+  .rr-footer { background: #071428; padding: 7px 16px; text-align: center; font-size: 11px; color: #2e4a70; letter-spacing: 0.1em; text-transform: uppercase; border-top: 1px solid #1a2e50; }
+  .rr-footer a { color: #C9A84C; text-decoration: none; }
+  .rr-footer a:hover { color: #e0bc65; }
+  @media (max-width: 520px) { .rr-subtitle { display: none; } .msg { max-width: 92%; } }
+
+  /* MEMBER VERIFY PANEL */
+  .rr-member-bar {
+    background: #162d52;
+    border-top: 1px solid #1e3660;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .rr-member-bar.verified { background: #0d2b0d; border-top-color: #4caf6e44; }
+  .rr-member-bar.failed   { background: #2b0d0d; border-top-color: #af4c4c44; }
+  .rr-member-label { font-size: 13px; color: #f5ead6; font-style: italic; white-space: nowrap; font-weight: 600; }
+  .rr-member-bar.verified .rr-member-label { color: #4caf6e; }
+  .rr-member-bar.failed   .rr-member-label { color: #e07070; }
+  .rr-member-input {
+    background: #f5ead6;
+    border: 1.5px solid #C9A84C;
+    border-radius: 4px;
+    padding: 5px 9px;
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 14px;
+    color: #1a0f00;
+    width: 90px;
+    outline: none;
+  }
+  .rr-member-input::placeholder { color: #8a6a3a; font-size: 12px; }
+  .rr-member-input:focus { border-color: #e0bc65; box-shadow: 0 0 0 2px #C9A84C44; }
+  .rr-member-verify-btn {
+    background: #C9A84C;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0d1f3c;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .rr-member-verify-btn:hover { background: #e0bc65; }
+  .rr-member-verify-btn:disabled { opacity: 0.45; cursor: default; }
+</style>
+<!-- v26APR2026-ZIP -->
+</head>
+<body>
+<div class="rr-chat-wrap" role="main" aria-label="Rough Rider Dispatch Chatbot">
+
+  <div class="rr-header">
+    <div class="rr-badge" aria-hidden="true"><img src="/sabre.png" alt="1st Cavalry" style="width:46px;height:46px;object-fit:contain;" /></div>
+    <div class="rr-header-text">
+      <div class="rr-title">Rough Rider Dispatch</div>
+      <div class="rr-subtitle">Your guide to Theodore Roosevelt &amp; the 1st U.S. Volunteer Cavalry Regiment</div>
+    </div>
+    <div class="rr-online"><div class="rr-dot"></div>On Duty</div>
+  </div>
+
+  <div class="rr-messages" id="rr-msgs" aria-live="polite">
+    <div class="msg msg-bot">
+      <div class="msg-name">Trooper</div>
+      Bully! Welcome, fellow patriot. I'm your guide to Theodore Roosevelt and the 1st U.S. Volunteer Cavalry Regiment – Rough Riders, Inc. Ask me anything about TR and the Rough Riders, our group's history, upcoming events, membership, the Fishing Tournament, or anything else. How can I serve you today?
+    </div>
+  </div>
+
+  <div class="rr-suggestions" id="rr-sugs">
+    <span class="sug-label">Try:</span>
+    <button class="sug-btn" onclick="askSug(this)">Who are the Rough Riders?</button>
+    <button class="sug-btn" onclick="askSug(this)">Upcoming events?</button>
+    <button class="sug-btn" onclick="askSug(this)">How do I join?</button>
+    <button class="sug-btn" onclick="askSug(this)">Fishing Tournament info</button>
+    <button class="sug-btn" onclick="askSug(this)">Tell me about TR</button>
+  </div>
+
+  <div class="rr-input-row">
+    <input id="rr-input" type="text" placeholder="Ask Trooper your question…" maxlength="400" aria-label="Type your question" />
+    <button id="rr-send" onclick="sendMsg()">Send →</button>
+  </div>
+
+
+  <!-- MEMBER VERIFY BAR -->
+  <div class="rr-member-bar" id="rr-member-bar">
+    <span class="rr-member-label" id="rr-member-label">Member? Enter your number, last name &amp; zip:</span>
+    <input class="rr-member-input" id="rr-mbr-num" type="text" placeholder="Member #" maxlength="6" />
+    <input class="rr-member-input" id="rr-mbr-last" type="text" placeholder="Last name" maxlength="40" style="width:115px;" />
+    <input class="rr-member-input" id="rr-mbr-zip" type="text" placeholder="Zip (5-digit)" maxlength="10" style="width:85px;" />
+    <button class="rr-member-verify-btn" id="rr-mbr-btn" onclick="verifyMember()">Verify ✓</button>
+  </div>
+
+  <div class="rr-action-row">
+    <button id="rr-contact-btn" onclick="toggleContact()">✉ Send message to Admin Office</button>
+  </div>
+
+  <div class="rr-toast-row" id="rr-toast-row">
+    <div class="rr-toast" id="rr-toast"></div>
+  </div>
+
+  <!-- CONTACT FORM -->
+  <div class="rr-contact-panel" id="rr-contact-panel">
+    <h3>✉ Message the Admin Office</h3>
+    <p>We'll get back to you as soon as possible — forward, march!</p>
+    <div class="rr-field">
+      <label for="cf-name">Your Name</label>
+      <input id="cf-name" type="text" placeholder="Full name" maxlength="100" />
+    </div>
+    <div class="rr-field">
+      <label for="cf-email">Your Email</label>
+      <input id="cf-email" type="email" placeholder="your@email.com" maxlength="150" />
+    </div>
+    <div class="rr-field">
+      <label for="cf-notes">Message / Notes</label>
+      <textarea id="cf-notes" placeholder="Tell us how we can help…" maxlength="1000"></textarea>
+    </div>
+    <div class="rr-contact-btns">
+      <button id="rr-contact-send" onclick="sendContact()">Send Dispatch →</button>
+      <button id="rr-contact-cancel" onclick="toggleContact()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="rr-footer">
+    <a href="https://tamparoughriders.org" target="_blank" rel="noopener">← Back to tamparoughriders.org</a>
+    &nbsp;·&nbsp; Est. 1898 · Tampa, Florida
+  </div>
+</div>
+
+<script>
+  const PROXY_URL      = '/.netlify/functions/chat';
+  const CONTACT_URL    = '/.netlify/functions/contact';
+
+  const msgsEl         = document.getElementById('rr-msgs');
+  const inputEl        = document.getElementById('rr-input');
+  const sendBtn        = document.getElementById('rr-send');
+  const sugsEl         = document.getElementById('rr-sugs');
+  const contactPanel   = document.getElementById('rr-contact-panel');
+  const toastRow       = document.getElementById('rr-toast-row');
+  const toastEl        = document.getElementById('rr-toast');
+
+  let history = [];
+  let busy    = false;
+  let memberNum  = null;
+  let memberLast = null;
+  let memberVerified = false;
+  let contactOpen = false;
+
+  function scrollBottom() { msgsEl.scrollTop = msgsEl.scrollHeight; }
+
+  function showToast(msg, isError) {
+    toastEl.textContent = msg;
+    toastEl.style.background   = isError ? '#2b0d0d' : '#0d2b0d';
+    toastEl.style.borderColor  = isError ? '#af4c4c66' : '#4caf6e66';
+    toastEl.style.color        = isError ? '#e07070'  : '#4caf6e';
+    toastRow.style.display = 'block';
+    setTimeout(() => { toastRow.style.display = 'none'; }, 5000);
+  }
+
+  function addMsg(role, text, isTyping) {
+    const isBotRaw = role === 'bot-raw';
+    if (isBotRaw) {
+      const wrap = document.createElement('div');
+      wrap.className = 'msg msg-bot';
+      wrap.innerHTML = '<div class="msg-name">Trooper</div><span>' + text + '</span>';
+      msgsEl.appendChild(wrap);
+      scrollBottom();
+      return wrap;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-bot');
+    const name = document.createElement('div');
+    name.className = 'msg-name';
+    name.textContent = role === 'user' ? 'You' : 'Trooper';
+    wrap.appendChild(name);
+    if (isTyping) {
+      const dots = document.createElement('div');
+      dots.className = 'typing-dots';
+      dots.innerHTML = '<span></span><span></span><span></span>';
+      wrap.appendChild(dots);
+    } else {
+      const body = document.createElement('span');
+      body.textContent = text;
+      wrap.appendChild(body);
+    }
+    msgsEl.appendChild(wrap);
+    scrollBottom();
+    return wrap;
+  }
+
+  function renderMarkdown(text) {
+    function processInline(str) {
+      return str
+        // Links: [text](url)
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+          '<a href="$2" target="_blank" rel="noopener" style="color:#6B1A1A; font-weight:600; text-decoration:underline; text-underline-offset:2px;">$1 ↗</a>')
+        // Bold: **text**
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.+?)__/g, '<strong>$1</strong>');
+    }
+
+    return text
+      .split(/\n\n+/)
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .map(para => {
+        const lines = para.split(/\n/);
+        const isList = lines.some(l => l.trim().startsWith('- ') || l.trim().startsWith('• '));
+        if (isList) {
+          const items = lines.map(line => {
+            line = line.trim();
+            if (line.startsWith('- ') || line.startsWith('• ')) {
+              return '<li style="margin-bottom:4px;">' + processInline(line.substring(2)) + '</li>';
+            }
+            return line ? '<li style="margin-bottom:4px;">' + processInline(line) + '</li>' : '';
+          }).filter(Boolean).join('');
+          return '<ul style="margin:4px 0 8px 16px; padding:0;">' + items + '</ul>';
+        }
+        return '<p style="margin:0 0 8px 0;">' + processInline(lines.join('<br>')) + '</p>';
+      })
+      .join('')
+      .replace(/<p style="margin:0 0 8px 0;"><\/p>/g, '');
+  }
+
+  async function sendMsg() {
+    if (busy) return;
+    const text = inputEl.value.trim();
+    if (!text) return;
+    sugsEl.style.display = 'none';
+    inputEl.value = '';
+    addMsg('user', text);
+    history.push({ role: 'user', content: text });
+    busy = true;
+    sendBtn.disabled = true;
+    const typingEl = addMsg('bot', '', true);
+    try {
+      const res = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, memberNum, memberLast }),
+      });
+      const data = await res.json();
+      const reply = data?.content?.[0]?.text || 'My apologies — the telegraph line seems to be down. Please try again!';
+      history.push({ role: 'assistant', content: reply });
+      typingEl.innerHTML = '<div class="msg-name">Trooper</div><span></span>';
+      typingEl.querySelector('span').innerHTML = renderMarkdown(reply);
+    } catch (err) {
+      typingEl.innerHTML = '<div class="msg-name">Trooper</div><span>The lines of communication are temporarily disrupted — please try again in a moment!</span>';
+    }
+    busy = false;
+    sendBtn.disabled = false;
+    scrollBottom();
+  }
+
+
+  function toggleContact() {
+    contactOpen = !contactOpen;
+    contactPanel.style.display = contactOpen ? 'block' : 'none';
+    if (contactOpen) contactPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  async function sendContact() {
+    const name  = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const notes = document.getElementById('cf-notes').value.trim();
+    if (!name || !email || !notes) {
+      showToast('Please fill in all three fields before sending.', true);
+      return;
+    }
+    const sendBtn2 = document.getElementById('rr-contact-send');
+    sendBtn2.disabled = true;
+    sendBtn2.textContent = 'Sending…';
+    try {
+      await fetch(CONTACT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, notes, timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }) }),
+      });
+      document.getElementById('cf-name').value = '';
+      document.getElementById('cf-email').value = '';
+      document.getElementById('cf-notes').value = '';
+      toggleContact();
+      showToast('Your message has been dispatched to the Admin Office! ✓', false);
+    } catch(e) {
+      showToast('Could not send message — please try again.', true);
+    }
+    sendBtn2.disabled = false;
+    sendBtn2.textContent = 'Send Dispatch →';
+  }
+
+  async function verifyMember() {
+    const num  = document.getElementById('rr-mbr-num').value.trim();
+    const last = document.getElementById('rr-mbr-last').value.trim();
+    const zip  = document.getElementById('rr-mbr-zip').value.trim();
+    if (!num || !last || !zip) return;
+    const btn  = document.getElementById('rr-mbr-btn');
+    const bar  = document.getElementById('rr-member-bar');
+    const lbl  = document.getElementById('rr-member-label');
+    btn.disabled = true;
+    btn.textContent = "Checking…";
+    console.log('Verifying member:', num, last, zip);
+    try {
+      const res = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'hello' }], memberNum: num, memberLast: last, memberZip: zip }),
+      });
+      const data = await res.json();
+      if (data.memberStatus && data.memberStatus.includes('MEMBER VERIFIED')) {
+        memberNum = num;
+        memberLast = last;
+        memberVerified = true;
+        const firstName = data.memberResult && data.memberResult.first ? data.memberResult.first : '';
+        const lastName  = data.memberResult && data.memberResult.last  ? data.memberResult.last  : '';
+        const fullName  = (firstName + ' ' + lastName).trim();
+        bar.className = 'rr-member-bar verified';
+        lbl.textContent = '✓ Member verified — welcome, ' + fullName + '!';
+        document.getElementById('rr-mbr-num').style.display = 'none';
+        document.getElementById('rr-mbr-last').style.display = 'none';
+        document.getElementById('rr-mbr-zip').style.display = 'none';
+        btn.style.display = 'none';
+        // Add a welcome message to chat
+        addMsg("bot-raw", "Bully! I have confirmed your membership. Welcome, " + firstName + "! Ask me anything — I can now share member-specific information with you.");
+      } else {
+        bar.className = 'rr-member-bar failed';
+        lbl.textContent = "✗ Not matched — check your number, last name and zip, or continue as a visitor.";
+        btn.disabled = false;
+        btn.textContent = "Try Again";
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = "Verify ✓";
+    }
+  }
+
+  function askSug(btn) { inputEl.value = btn.textContent; sendMsg(); }
+  inputEl.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) sendMsg(); });
+</script>
+<!-- UNIQUE-1777221223.3615746-84c26674b817fed0ee9d12343ffdc456 -->
+</body>
+</html>
