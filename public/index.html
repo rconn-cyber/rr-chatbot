@@ -46,12 +46,18 @@
   #rr-send:hover { background: #e0bc65; }
   #rr-send:active { transform: scale(0.97); }
   #rr-send:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+  /* ACTION BUTTONS ROW */
   .rr-action-row { background: #0d1f3c; padding: 0 14px 10px; display: flex; gap: 8px; }
   .rr-action-row button { flex: 1; background: #1e3660; border: 1.5px solid #C9A84C; border-radius: 6px; padding: 9px 10px; font-family: 'Crimson Text', Georgia, serif; font-size: 14px; color: #C9A84C; cursor: pointer; font-style: italic; transition: background 0.15s, color 0.15s; }
   .rr-action-row button:hover { background: #C9A84C; color: #0d1f3c; }
   #rr-contact-btn { display: block; }
+
+  /* TOAST */
   .rr-toast-row { background: #0d1f3c; padding: 0 14px 10px; display: none; }
   .rr-toast { background: #0d2b0d; border: 1px solid #4caf6e66; border-radius: 6px; padding: 8px 14px; font-family: 'Crimson Text', Georgia, serif; font-size: 13px; color: #4caf6e; font-style: italic; text-align: center; }
+
+  /* CONTACT FORM PANEL */
   .rr-contact-panel { display: none; background: #f5efe3; border-top: 2px solid #C9A84C; padding: 18px 16px; }
   .rr-contact-panel h3 { font-family: 'Playfair Display', Georgia, serif; color: #0d1f3c; font-size: 16px; margin-bottom: 4px; }
   .rr-contact-panel p { font-size: 13px; color: #6b5a3a; font-style: italic; margin-bottom: 14px; }
@@ -66,25 +72,69 @@
   #rr-contact-send:disabled { opacity: 0.45; cursor: default; }
   #rr-contact-cancel { background: transparent; border: 1px solid #d4c49a; border-radius: 6px; padding: 10px 18px; font-family: 'Crimson Text', Georgia, serif; font-size: 14px; color: #8a7a5a; cursor: pointer; font-style: italic; transition: background 0.15s; }
   #rr-contact-cancel:hover { background: #e8dfc8; }
+
   .rr-footer { background: #071428; padding: 7px 16px; text-align: center; font-size: 11px; color: #2e4a70; letter-spacing: 0.1em; text-transform: uppercase; border-top: 1px solid #1a2e50; }
   .rr-footer a { color: #C9A84C; text-decoration: none; }
   .rr-footer a:hover { color: #e0bc65; }
   @media (max-width: 520px) { .rr-subtitle { display: none; } .msg { max-width: 92%; } }
 
-  /* MEMBER VERIFY BAR */
+  /* MEMBER VERIFY PANEL */
+  /* Standing Rule / Article dropdowns */
+  .rr-rule-ref {
+    display: inline;
+  }
+  details.rr-dropdown {
+    display: block;
+    margin: 6px 0;
+    border: 1px solid #C9A84C44;
+    border-radius: 6px;
+    background: #0d1f3c11;
+    overflow: hidden;
+  }
+  details.rr-dropdown summary {
+    cursor: pointer;
+    padding: 6px 10px;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6B1A1A;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+  details.rr-dropdown summary::-webkit-details-marker { display: none; }
+  details.rr-dropdown summary::before {
+    content: "▶";
+    font-size: 10px;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  details.rr-dropdown[open] summary::before { transform: rotate(90deg); }
+  details.rr-dropdown .rr-dropdown-body {
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #2a1a0a;
+    border-top: 1px solid #C9A84C33;
+    background: #fffdf5;
+  }
+  details.rr-dropdown .rr-dropdown-body p { margin: 0 0 6px 0; }
+  details.rr-dropdown .rr-dropdown-body ul { margin: 4px 0 6px 16px; padding: 0; }
+  details.rr-dropdown .rr-dropdown-body li { margin-bottom: 3px; }
+
   .rr-member-bar {
     background: #162d52;
-    border-top: 2px solid #C9A84C44;
-    border-bottom: 2px solid #C9A84C44;
-    padding: 14px 14px;
+    border-top: 1px solid #1e3660;
+    padding: 8px 14px;
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    margin: 4px 0;
   }
-  .rr-member-bar.verified { background: #0d2b0d; border-color: #4caf6e44; }
-  .rr-member-bar.failed   { background: #2b0d0d; border-color: #af4c4c44; }
+  .rr-member-bar.verified { background: #0d2b0d; border-top-color: #4caf6e44; }
+  .rr-member-bar.failed   { background: #2b0d0d; border-top-color: #af4c4c44; }
   .rr-member-label { font-size: 13px; color: #f5ead6; font-style: italic; white-space: nowrap; font-weight: 600; }
   .rr-member-bar.verified .rr-member-label { color: #4caf6e; }
   .rr-member-bar.failed   .rr-member-label { color: #e07070; }
@@ -117,6 +167,7 @@
   .rr-member-verify-btn:hover { background: #e0bc65; }
   .rr-member-verify-btn:disabled { opacity: 0.45; cursor: default; }
 </style>
+<!-- v26APR2026-ZIP -->
 </head>
 <body>
 <div class="rr-chat-wrap" role="main" aria-label="Rough Rider Dispatch Chatbot">
@@ -148,8 +199,9 @@
 
   <div class="rr-input-row">
     <input id="rr-input" type="text" placeholder="Ask Trooper your question…" maxlength="400" aria-label="Type your question" />
-    <button id="rr-send" onclick="sendMsg()">Send &#8594;</button>
+    <button id="rr-send" onclick="sendMsg()">Send →</button>
   </div>
+
 
   <!-- MEMBER VERIFY BAR -->
   <div class="rr-member-bar" id="rr-member-bar">
@@ -157,11 +209,11 @@
     <input class="rr-member-input" id="rr-mbr-num" type="text" placeholder="Member #" maxlength="6" />
     <input class="rr-member-input" id="rr-mbr-last" type="text" placeholder="Last name" maxlength="40" style="width:115px;" />
     <input class="rr-member-input" id="rr-mbr-zip" type="text" placeholder="Zip (5-digit)" maxlength="10" style="width:85px;" />
-    <button class="rr-member-verify-btn" id="rr-mbr-btn" onclick="verifyMember()">Verify &#10003;</button>
+    <button class="rr-member-verify-btn" id="rr-mbr-btn" onclick="verifyMember()">Verify ✓</button>
   </div>
 
   <div class="rr-action-row">
-    <button id="rr-contact-btn" onclick="toggleContact()">&#9993; Send message to Admin Office</button>
+    <button id="rr-contact-btn" onclick="toggleContact()">✉ Send message to Admin Office</button>
   </div>
 
   <div class="rr-toast-row" id="rr-toast-row">
@@ -170,7 +222,7 @@
 
   <!-- CONTACT FORM -->
   <div class="rr-contact-panel" id="rr-contact-panel">
-    <h3>&#9993; Message the Admin Office</h3>
+    <h3>✉ Message the Admin Office</h3>
     <p>We'll get back to you as soon as possible — forward, march!</p>
     <div class="rr-field">
       <label for="cf-name">Your Name</label>
@@ -185,28 +237,28 @@
       <textarea id="cf-notes" placeholder="Tell us how we can help…" maxlength="1000"></textarea>
     </div>
     <div class="rr-contact-btns">
-      <button id="rr-contact-send" onclick="sendContact()">Send Dispatch &#8594;</button>
+      <button id="rr-contact-send" onclick="sendContact()">Send Dispatch →</button>
       <button id="rr-contact-cancel" onclick="toggleContact()">Cancel</button>
     </div>
   </div>
 
   <div class="rr-footer">
-    <a href="https://tamparoughriders.org" target="_blank" rel="noopener">&#8592; Back to tamparoughriders.org</a>
-    &nbsp;&#183;&nbsp; Est. 1898 &middot; Tampa, Florida
+    <a href="https://tamparoughriders.org" target="_blank" rel="noopener">← Back to tamparoughriders.org</a>
+    &nbsp;·&nbsp; Est. 1898 · Tampa, Florida
   </div>
 </div>
 
 <script>
-  const PROXY_URL   = '/.netlify/functions/chat';
-  const CONTACT_URL = '/.netlify/functions/contact';
+  const PROXY_URL      = '/.netlify/functions/chat';
+  const CONTACT_URL    = '/.netlify/functions/contact';
 
-  const msgsEl       = document.getElementById('rr-msgs');
-  const inputEl      = document.getElementById('rr-input');
-  const sendBtn      = document.getElementById('rr-send');
-  const sugsEl       = document.getElementById('rr-sugs');
-  const contactPanel = document.getElementById('rr-contact-panel');
-  const toastRow     = document.getElementById('rr-toast-row');
-  const toastEl      = document.getElementById('rr-toast');
+  const msgsEl         = document.getElementById('rr-msgs');
+  const inputEl        = document.getElementById('rr-input');
+  const sendBtn        = document.getElementById('rr-send');
+  const sugsEl         = document.getElementById('rr-sugs');
+  const contactPanel   = document.getElementById('rr-contact-panel');
+  const toastRow       = document.getElementById('rr-toast-row');
+  const toastEl        = document.getElementById('rr-toast');
 
   let history = [];
   let busy    = false;
@@ -220,35 +272,36 @@
 
   function showToast(msg, isError) {
     toastEl.textContent = msg;
-    toastEl.style.background  = isError ? '#2b0d0d' : '#0d2b0d';
-    toastEl.style.borderColor = isError ? '#af4c4c66' : '#4caf6e66';
-    toastEl.style.color       = isError ? '#e07070'  : '#4caf6e';
+    toastEl.style.background   = isError ? '#2b0d0d' : '#0d2b0d';
+    toastEl.style.borderColor  = isError ? '#af4c4c66' : '#4caf6e66';
+    toastEl.style.color        = isError ? '#e07070'  : '#4caf6e';
     toastRow.style.display = 'block';
-    setTimeout(function() { toastRow.style.display = 'none'; }, 5000);
+    setTimeout(() => { toastRow.style.display = 'none'; }, 5000);
   }
 
   function addMsg(role, text, isTyping) {
-    if (role === 'bot-raw') {
-      var wrap = document.createElement('div');
+    const isBotRaw = role === 'bot-raw';
+    if (isBotRaw) {
+      const wrap = document.createElement('div');
       wrap.className = 'msg msg-bot';
       wrap.innerHTML = '<div class="msg-name">Trooper</div><span>' + text + '</span>';
       msgsEl.appendChild(wrap);
       scrollBottom();
       return wrap;
     }
-    var wrap = document.createElement('div');
+    const wrap = document.createElement('div');
     wrap.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-bot');
-    var name = document.createElement('div');
+    const name = document.createElement('div');
     name.className = 'msg-name';
     name.textContent = role === 'user' ? 'You' : 'Trooper';
     wrap.appendChild(name);
     if (isTyping) {
-      var dots = document.createElement('div');
+      const dots = document.createElement('div');
       dots.className = 'typing-dots';
       dots.innerHTML = '<span></span><span></span><span></span>';
       wrap.appendChild(dots);
     } else {
-      var body = document.createElement('span');
+      const body = document.createElement('span');
       body.textContent = text;
       wrap.appendChild(body);
     }
@@ -260,27 +313,30 @@
   function renderMarkdown(text) {
     function processInline(str) {
       return str
+        // Links: [text](url)
         .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
-          '<a href="$2" target="_blank" rel="noopener" style="color:#6B1A1A;font-weight:600;text-decoration:underline;text-underline-offset:2px;">$1 &#8599;</a>')
+          '<a href="$2" target="_blank" rel="noopener" style="color:#6B1A1A; font-weight:600; text-decoration:underline; text-underline-offset:2px;">$1 ↗</a>')
+        // Bold: **text**
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/__(.+?)__/g, '<strong>$1</strong>');
     }
+
     return text
       .split(/\n\n+/)
-      .map(function(para) { return para.trim(); })
-      .filter(function(para) { return para.length > 0; })
-      .map(function(para) {
-        var lines = para.split(/\n/);
-        var isList = lines.some(function(l) { return l.trim().startsWith('- ') || l.trim().startsWith('• '); });
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .map(para => {
+        const lines = para.split(/\n/);
+        const isList = lines.some(l => l.trim().startsWith('- ') || l.trim().startsWith('• '));
         if (isList) {
-          var items = lines.map(function(line) {
+          const items = lines.map(line => {
             line = line.trim();
             if (line.startsWith('- ') || line.startsWith('• ')) {
               return '<li style="margin-bottom:4px;">' + processInline(line.substring(2)) + '</li>';
             }
             return line ? '<li style="margin-bottom:4px;">' + processInline(line) + '</li>' : '';
           }).filter(Boolean).join('');
-          return '<ul style="margin:4px 0 8px 16px;padding:0;">' + items + '</ul>';
+          return '<ul style="margin:4px 0 8px 16px; padding:0;">' + items + '</ul>';
         }
         return '<p style="margin:0 0 8px 0;">' + processInline(lines.join('<br>')) + '</p>';
       })
@@ -288,9 +344,113 @@
       .replace(/<p style="margin:0 0 8px 0;"><\/p>/g, '');
   }
 
+  // ── Standing Rule & Article reference data ──────────────────────
+  const RR_RULES = {
+    'Standing Rule 1': {
+      title: 'Standing Rule 1 – Membership',
+      body: `<p><strong>Membership Types:</strong> Full Member, Probationary Member, Leave of Absence, Non-Resident Member (80+ miles), Honorary Member.</p>
+<p><strong>Application window:</strong> May 1 – June 30 each year. Membership cap: 600 Full Members.</p>
+<p><strong>Sponsorship:</strong> Two Full Members must sponsor you; one must have known you at least 3 years.</p>
+<p><strong>Dues:</strong> New member fee $1,500 (includes first year dues + uniform). Annual renewal $500. Late fee $100 after June 30.</p>
+<p><strong>Background check</strong> required for all new applicants.</p>`
+    },
+    'Standing Rule 2': {
+      title: 'Standing Rule 2 – New Member Participation Requirements',
+      body: `<p>New members must during their first year:</p>
+<ul><li>Join two (2) committees</li><li>Attend one (1) major parade</li><li>Attend two (2) major events</li><li>Participate on Float Committee and one Special Events Committee (mandatory)</li></ul>
+<p>Completion required to be promoted from Recruit to Trooper and to reenlist.</p>`
+    },
+    'Standing Rule 3': {
+      title: 'Standing Rule 3 – Uniforms',
+      body: `<p>All members must wear the official Rough Riders uniform at designated events. Key items:</p>
+<ul><li>Stetson-style hat (tan/beige/light brown) with cross sabers</li><li>Blue polka dot kerchief</li><li>Dark blue long-sleeve shirt</li><li>Khaki/tan long pants (no shorts)</li><li>Black or brown shoes/boots</li><li>Member ID patch and current year dues patch on left sleeve</li></ul>
+<p>No unauthorized patches or insignia. Violations subject to disciplinary action.</p>`
+    },
+    'Standing Rule 9': {
+      title: 'Standing Rule 9 – Discipline Policies & Procedures',
+      body: `<p>Members must conduct themselves so as not to bring discredit upon the Rough Riders at all times.</p>
+<p><strong>Reporting:</strong> Written complaint submitted to Disciplinary Committee with date, time, location, and witnesses.</p>
+<p><strong>Process:</strong> Probable cause review → investigation → written notice to offending member → Committee hearing → Board of Directors approval of sanctions.</p>
+<p><strong>Possible sanctions include:</strong> oral/written reprimand, fines, community service, probation, suspension, rank reduction, or expulsion.</p>`
+    },
+    'Standing Rule 11': {
+      title: 'Standing Rule 11 – Financial Policies',
+      body: `<p><strong>Budget:</strong> President submits annual budget for Board approval.</p>
+<p><strong>Urgency spending:</strong> Executive Board may approve up to $500 without Board approval.</p>
+<p><strong>President's Discretionary Fund:</strong> $2,500 per term.</p>
+<p><strong>No cash advances.</strong> Members reimbursed with receipts only.</p>
+<p><strong>No-show policy:</strong> Members charged for reserved events if not cancelled 48 hours in advance.</p>`
+    },
+    'Standing Rule 13': {
+      title: 'Standing Rule 13 – Strategic Fund Plan',
+      body: `<p>The Strategic Fund covers: (1) periodic replacement of building/property systems, (2) discretionary capital projects, (3) catastrophic event mitigation.</p>
+<p>The Strategic Planning Committee presents an integrated plan to the Board each April.</p>
+<p>A minimum threshold is set annually to ensure funds are available for emergencies.</p>`
+    },
+    'Article IV': {
+      title: 'Article IV – Membership (Bylaws)',
+      body: `<p>Membership is open to all persons 21 years of age or older without regard to race, sex, color, creed, national origin, religion, or economic status.</p>
+<p>Members must demonstrate a sincere desire to promote and perpetuate the mission, ideals, and purposes of the organization.</p>
+<p>Policies and procedures are detailed in Standing Rule 1.</p>`
+    },
+    'Article VI': {
+      title: 'Article VI – Officers (Bylaws)',
+      body: `<p><strong>Executive Officers:</strong> Chairman of the Board (immediate Past President), President (Lt. Colonel), First VP/Chief of Staff, Second VP/Treasurer, Secretary, Logistics Officer.</p>
+<p><strong>Term:</strong> One year. Must be nominated by Nominating Committee of Past Presidents and approved at Annual General Membership Meeting.</p>
+<p><strong>Qualification:</strong> Must have served at least one full 2-year term as Board Director before serving as an Executive Officer.</p>`
+    },
+    'Article VII': {
+      title: 'Article VII – Board of Directors (Bylaws)',
+      body: `<p><strong>Composition:</strong> 34 members serving 2-year terms + 5 members serving 1-year terms + Board Emeritus, Senior Emeritus, and Honorary Emeritus members.</p>
+<p><strong>Meetings:</strong> At least 6 times per year.</p>
+<p><strong>Quorum:</strong> 51% of entire Board.</p>
+<p><strong>Attendance:</strong> Missing 3 unexcused meetings may result in removal.</p>
+<p><strong>Elections:</strong> Held at Annual General Membership Meeting each October.</p>`
+    },
+    'Article VIII': {
+      title: 'Article VIII – Committees (Bylaws)',
+      body: `<p><strong>Standing Committees include:</strong> Membership/Promotions, Nominating Committee of Past Presidents, Charitable Contributions, John Winter Teddy Bear Fund, Bylaws & Standing Rules, Finance-Internal Review, Disciplinary, Strategic Planning.</p>
+<p><strong>President also appoints:</strong> Awards, Historical/Educational, Float, Teddy Bear, Public Affairs/PR committees and others as needed.</p>`
+    }
+  };
+
+  // Map shorthand mentions to full keys
+  const RULE_ALIASES = {
+    'rule 1': 'Standing Rule 1', 'standing rule 1': 'Standing Rule 1',
+    'rule 2': 'Standing Rule 2', 'standing rule 2': 'Standing Rule 2',
+    'rule 3': 'Standing Rule 3', 'standing rule 3': 'Standing Rule 3',
+    'rule 9': 'Standing Rule 9', 'standing rule 9': 'Standing Rule 9',
+    'rule 11': 'Standing Rule 11', 'standing rule 11': 'Standing Rule 11',
+    'rule 13': 'Standing Rule 13', 'standing rule 13': 'Standing Rule 13',
+    'article iv': 'Article IV', 'article 4': 'Article IV',
+    'article vi': 'Article VI', 'article 6': 'Article VI',
+    'article vii': 'Article VII', 'article 7': 'Article VII',
+    'article viii': 'Article VIII', 'article 8': 'Article VIII',
+  };
+
+  function injectDropdowns(html) {
+    const found = new Set();
+    const lower = html.toLowerCase();
+    for (const [alias, key] of Object.entries(RULE_ALIASES)) {
+      if (lower.includes(alias) && !found.has(key)) {
+        found.add(key);
+      }
+    }
+    if (found.size === 0) return html;
+    const dropdowns = Array.from(found).map(key => {
+      const rule = RR_RULES[key];
+      if (!rule) return '';
+      return `<details class="rr-dropdown">
+  <summary>${rule.title}</summary>
+  <div class="rr-dropdown-body">${rule.body}</div>
+</details>`;
+    }).join('\n');
+    return html + '\n' + dropdowns;
+  }
+
   async function sendMsg() {
     if (busy) return;
-    var text = inputEl.value.trim();
+    const text = inputEl.value.trim();
     if (!text) return;
     sugsEl.style.display = 'none';
     inputEl.value = '';
@@ -298,20 +458,18 @@
     history.push({ role: 'user', content: text });
     busy = true;
     sendBtn.disabled = true;
-    var typingEl = addMsg('bot', '', true);
+    const typingEl = addMsg('bot', '', true);
     try {
-      var res = await fetch(PROXY_URL, {
+      const res = await fetch(PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, memberNum: memberNum, memberLast: memberLast, memberZip: memberZip }),
+        body: JSON.stringify({ messages: history, memberNum, memberLast, memberZip }),
       });
-      var data = await res.json();
-      var reply = (data && data.content && data.content[0] && data.content[0].text)
-        ? data.content[0].text
-        : 'My apologies — the telegraph line seems to be down. Please try again!';
+      const data = await res.json();
+      const reply = data?.content?.[0]?.text || 'My apologies — the telegraph line seems to be down. Please try again!';
       history.push({ role: 'assistant', content: reply });
       typingEl.innerHTML = '<div class="msg-name">Trooper</div><span></span>';
-      typingEl.querySelector('span').innerHTML = renderMarkdown(reply);
+      typingEl.querySelector('span').innerHTML = injectDropdowns(renderMarkdown(reply));
     } catch (err) {
       typingEl.innerHTML = '<div class="msg-name">Trooper</div><span>The lines of communication are temporarily disrupted — please try again in a moment!</span>';
     }
@@ -320,6 +478,7 @@
     scrollBottom();
   }
 
+
   function toggleContact() {
     contactOpen = !contactOpen;
     contactPanel.style.display = contactOpen ? 'block' : 'none';
@@ -327,77 +486,84 @@
   }
 
   async function sendContact() {
-    var name  = document.getElementById('cf-name').value.trim();
-    var email = document.getElementById('cf-email').value.trim();
-    var notes = document.getElementById('cf-notes').value.trim();
-    if (!name || !email || !notes) { showToast('Please fill in all three fields before sending.', true); return; }
-    var sendBtn2 = document.getElementById('rr-contact-send');
+    const name  = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const notes = document.getElementById('cf-notes').value.trim();
+    if (!name || !email || !notes) {
+      showToast('Please fill in all three fields before sending.', true);
+      return;
+    }
+    const sendBtn2 = document.getElementById('rr-contact-send');
     sendBtn2.disabled = true;
-    sendBtn2.textContent = 'Sending\u2026';
+    sendBtn2.textContent = 'Sending…';
     try {
       await fetch(CONTACT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, email: email, notes: notes, timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }) }),
+        body: JSON.stringify({ name, email, notes, timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }) }),
       });
       document.getElementById('cf-name').value = '';
       document.getElementById('cf-email').value = '';
       document.getElementById('cf-notes').value = '';
       toggleContact();
-      showToast('Your message has been dispatched to the Admin Office! \u2713', false);
+      showToast('Your message has been dispatched to the Admin Office! ✓', false);
     } catch(e) {
       showToast('Could not send message — please try again.', true);
     }
     sendBtn2.disabled = false;
-    sendBtn2.textContent = 'Send Dispatch \u2192';
+    sendBtn2.textContent = 'Send Dispatch →';
   }
 
   async function verifyMember() {
-    var num  = document.getElementById('rr-mbr-num').value.trim();
-    var last = document.getElementById('rr-mbr-last').value.trim();
-    var zip  = document.getElementById('rr-mbr-zip').value.trim();
-    if (!num || !last || !zip) { showToast('Please enter your member number, last name, and zip code.', true); return; }
-    var btn = document.getElementById('rr-mbr-btn');
-    var bar = document.getElementById('rr-member-bar');
-    var lbl = document.getElementById('rr-member-label');
+    const num  = document.getElementById('rr-mbr-num').value.trim();
+    const last = document.getElementById('rr-mbr-last').value.trim();
+    const zip  = document.getElementById('rr-mbr-zip').value.trim();
+    if (!num || !last || !zip) return;
+    const btn  = document.getElementById('rr-mbr-btn');
+    const bar  = document.getElementById('rr-member-bar');
+    const lbl  = document.getElementById('rr-member-label');
     btn.disabled = true;
-    btn.textContent = 'Checking\u2026';
+    btn.textContent = "Checking…";
+    console.log('Verifying member:', num, last, zip);
     try {
-      var res = await fetch(PROXY_URL, {
+      const res = await fetch(PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [], memberNum: num, memberLast: last, memberZip: zip, verifyOnly: true }),
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'hello' }], memberNum: num, memberLast: last, memberZip: zip, verifyOnly: true }),
       });
-      if (!res.ok) throw new Error('Server error ' + res.status);
-      var data = await res.json();
-      if (data.memberStatus && data.memberStatus.indexOf('MEMBER VERIFIED') !== -1) {
-        memberNum = num; memberLast = last; memberZip = zip; memberVerified = true;
-        var firstName = (data.memberResult && data.memberResult.first) ? data.memberResult.first : '';
-        var rawLast   = (data.memberResult && data.memberResult.last)  ? data.memberResult.last  : '';
-        var lastName  = rawLast.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        var fullName  = (firstName + ' ' + lastName).trim();
+      const data = await res.json();
+      if (data.memberStatus && data.memberStatus.includes('MEMBER VERIFIED')) {
+        memberNum = num;
+        memberLast = last;
+        memberZip = zip;
+        memberVerified = true;
+        const firstName = data.memberResult && data.memberResult.first ? data.memberResult.first : '';
+        const rawLast   = data.memberResult && data.memberResult.last  ? data.memberResult.last  : '';
+        const lastName  = rawLast.replace(/\b\w/g, c => c.toUpperCase());
+        const fullName  = (firstName + ' ' + lastName).trim();
         bar.className = 'rr-member-bar verified';
-        lbl.textContent = '\u2713 Member verified \u2014 welcome, ' + fullName + '!';
-        document.getElementById('rr-mbr-num').style.display  = 'none';
+        lbl.textContent = '✓ Member verified — welcome, ' + fullName + '!';
+        document.getElementById('rr-mbr-num').style.display = 'none';
         document.getElementById('rr-mbr-last').style.display = 'none';
-        document.getElementById('rr-mbr-zip').style.display  = 'none';
+        document.getElementById('rr-mbr-zip').style.display = 'none';
         btn.style.display = 'none';
-        addMsg('bot-raw', 'Bully! Welcome, ' + firstName + '! I have confirmed your membership. Ask me anything — I can now share member-specific information with you.');
+        // Add a welcome message to chat
+        addMsg("bot-raw", "Bully! Welcome, " + firstName + "! I have confirmed your membership. Ask me anything — I can now share member-specific information with you.");
       } else {
         bar.className = 'rr-member-bar failed';
-        lbl.textContent = '\u2717 Not matched \u2014 check your number, last name and zip, or continue as a visitor.';
+        lbl.textContent = "✗ Not matched — check your number, last name and zip, or continue as a visitor.";
         btn.disabled = false;
-        btn.textContent = 'Try Again';
+        btn.textContent = "Try Again";
       }
     } catch(e) {
-      showToast('Verification unavailable \u2014 please try again.', true);
       btn.disabled = false;
-      btn.textContent = 'Verify \u2713';
+      btn.textContent = "Verify ✓";
     }
   }
 
   function askSug(btn) { inputEl.value = btn.textContent; sendMsg(); }
   inputEl.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) sendMsg(); });
 </script>
+<!-- UNIQUE-1777221223.3615746-84c26674b817fed0ee9d12343ffdc456 -->
 </body>
 </html>
